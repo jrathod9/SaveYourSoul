@@ -5,7 +5,7 @@ var c = canvas.getContext('2d');
 
 var life = 100;
 var enemyColor = 'black';
-var playerColor = 'teal';
+var playerColor = 'white';
 var maxEnemies = 100;
 var level = 1;
 var enemies = new Array();
@@ -62,7 +62,7 @@ var game = {
         for(i=0;i<maxEnemies;i++){
             enemies[i].vy = -1*enemies[i].vx;
         }
-        p = new player(mousex,mousey,5,playerColor);
+        p = new player(mousex,mousey,10,playerColor);
         game.loop();
     },
 
@@ -138,12 +138,13 @@ var game = {
         }
         c.globalAlpha = 1;
         c.fillStyle = playerColor;
-        c.shadowBlur = 10;
-        c.shadowColor = "silver";
+        c.shadowBlur = 20;
+        c.shadowColor = "aqua";
         c.beginPath();
         c.arc(p.x,p.y,p.rad,0,Math.PI*2,false);
         c.closePath();
         c.fill();
+        c.shadowColor = "white";
 
         // c.beginPath();
         //     c.strokeStyle = 'red';
