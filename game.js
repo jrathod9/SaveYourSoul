@@ -11,6 +11,7 @@ var level = 1;
 var enemies = new Array();
 var p; 
 var count = 0;
+var score = 0;
 var frames = 100;
 
 
@@ -72,6 +73,7 @@ var game = {
     },
 
     update : function(){
+
         var i=0;
         p.x = game.mousex;
         p.y = game.mousey;
@@ -80,7 +82,7 @@ var game = {
             enemies[i].y+=enemies[i].vy;
             
             if(game.distance(enemies[i],p)<=enemies[i].rad+p.rad){
-                life --;
+                life -=20;
                 // console.log(life);
                 enemies.splice(i,1);
                 var temp = new enemy(
@@ -122,6 +124,13 @@ var game = {
         }
         var i;
         // c.clearRect(0,0,canvas.width,canvas.height);
+        c.font = "20px Arial";
+        
+        c.fillText("Score : " + score,50,50);
+
+        // c.fillStyle = "rgb("+255*life/100+','+255*life/100+','+255*life/100+')';
+        c.fillRect(200,33,life*2,20);
+
         c.fillStyle = 'rgba(0,0,0,0.1)';
         c.beginPath();
         c.fillRect(0, 0 ,canvas.width, canvas.height);
@@ -146,30 +155,24 @@ var game = {
         c.fill();
         c.shadowColor = "white";
 
-        // c.beginPath();
-        //     c.strokeStyle = 'red';
-        //     c.moveTo(mousex,mousey);
-        //     c.lineTo(game.prevx,game.prevy);
-        //     c.lineWidth = 1;
-        //     c.closePath();
-        //     c.stroke();
-
-        // c.moveTo(p.x,p.y);
-        // c.beginPath();
-        // c.strokeStyle = "red";
-        // c.lineTo(game.prevx,game.prevy);
-        // c.closePath();
-        // c.stroke();
         
         
     },
 
     loop: function() {
-
+        if(life){
+        score++;
         game.update();
         game.render();
-        
         requestAnimFrame(game.loop);
+        }
+        else{
+            c.clearRect(0,0,canvas.width,canvas.height);
+            c.beginPath();
+            c.font = "30px Arial";
+            c.fillText("Score : "+score,canvas.width/2-40,canvas.height/2-20);
+            c.closePath();
+        }
     }
 };
 
