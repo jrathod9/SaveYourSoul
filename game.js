@@ -53,8 +53,8 @@ var game = {
             var temp = new enemy(
                     Math.random()*2*canvas.width,
                     Math.random()*canvas.height-canvas.height,
-                    Math.random()*(-5)-2,
-                    0,
+                    Math.random()*(-2)-2,
+                    Math.random()*(-2)-2,
                     Math.random()*3+3,enemyColor
                 );
             temp.vy = -1*temp.vx;
@@ -65,6 +65,34 @@ var game = {
         }
         p = new player(mousex,mousey,10,playerColor);
         game.loop();
+    },
+    start : function() {
+        c.clearRect(0,0,canvas.width,canvas.height);
+        c.font = "60px Calibri";
+        c.fillStyle = "aqua";
+        c.shadowBlur = 10;
+		c.shadowColor = "aqua";
+        // c.beginPath();
+        c.fillText("-- $ave Your $oul --",canvas.width/2-240,canvas.height/2-50);
+        c.font = "15px Calibri";
+        c.fillStyle = "aquamarine";
+        c.shadowBlur=1;
+        c.fillText("J A Y  R A T H O D",canvas.width/2-65,canvas.height/2-30);
+        c.font = "17px Calibri";
+        // c.globalAlpha=0.5;
+        c.fillStyle = "tomato";
+        c.shadowBlur=0;
+        c.fillText("Devil spirits have attacked $oulyard....",canvas.width/2-135,canvas.height/2);
+        c.fillText("Prevent the spirits from touching your $oul.",canvas.width/2-150,canvas.height/2+16);
+        c.globalAlpha=1;
+        c.fillStyle = "aqua";
+        c.shadowBlur=5;
+        c.fillText("CONTROLS : Use MOUSE to move your soul.",canvas.width/2-165,canvas.height/2+50);
+        c.fillStyle = "white";
+        c.shadowBlur=1;
+        c.fillText("[ Press any key to start ]",canvas.width/2-90,canvas.height/2+230);
+        // c.closePath();
+        window.addEventListener('keypress',game.init,false);
     },
 
     distance : function(ob1,ob2){
@@ -88,8 +116,8 @@ var game = {
                 var temp = new enemy(
                     Math.random()*2*canvas.width,
                     Math.random()*canvas.height-canvas.height,
-                    Math.random()*(-5)-2,
-                    0,
+                    Math.random()*(-2)-1.5*level,
+                    Math.random()*(-2)-1.5*level,
                     Math.random()*3+3,enemyColor
                 );
                 temp.vy = -1*temp.vx;
@@ -105,8 +133,8 @@ var game = {
                 var temp = new enemy(
                     Math.random()*2*canvas.width,
                     Math.random()*canvas.height-canvas.height,
-                    Math.random()*(-5)-2,
-                    0,
+                    Math.random()*(-2)-1.5*level,
+                    Math.random()*(-2)-1.5*level,
                     Math.random()*3+3,enemyColor
                 );
                 temp.vy=-1*temp.vx;
@@ -154,14 +182,22 @@ var game = {
         c.closePath();
         c.fill();
         c.shadowColor = "white";
-
-        
         
     },
 
     loop: function() {
         if(life){
         score++;
+        if(score%1000 == 0){
+            level++;
+        }
+        if(score%1000==0||score%1000==1||score%1000==2||score%1000==3||score%1000==4){
+            c.font = "30px Arial"; 
+            c.fillStyle = "blue";
+            c.fillText("Level up",canvas.width/2-250,53);
+            c.fillStyle = playerColor;
+        }
+            
         game.update();
         game.render();
         requestAnimFrame(game.loop);
@@ -176,7 +212,7 @@ var game = {
     }
 };
 
-window.addEventListener('load',game.init,false);
+window.addEventListener('load',game.start,false);
 window.onmousemove = function(e){
     game.mousex = e.x;
     game.mousey = e.y;
