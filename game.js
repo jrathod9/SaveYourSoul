@@ -3,18 +3,6 @@ canvas.width = window.innerWidth-20;
 canvas.height = window.innerHeight-25;
 var c = canvas.getContext('2d');
 
-var life = 100;
-var enemyColor = 'black';
-var playerColor = 'white';
-var maxEnemies = 100;
-var level = 1;
-var enemies = new Array();
-var p; 
-var count = 0;
-var score = 0;
-var frames = 100;
-
-
 var enemy = function(x,y,vx,vy,rad,clr){
     this.x = x;
     this.y = y;
@@ -43,27 +31,53 @@ window.requestAnimFrame = (function(){
   })();
 
 var game = {
+    life : 100,
+    enemyColor : 'black',
+    playerColor : 'white',
+    maxEnemies : 100,
+    level : 1,
+    alive : 0,
+    enemies : new Array(),
+    p : null, 
+    count : 0,
+    score : 0,
+    frames: 100,
     mousex : 0,
     mousey : 0, 
     prevx : 0,
     prevy : 0,
     init : function(){
+    game.life = 100;
+    game.alive = 1;
+    game.enemyColor = 'black';
+    game.playerColor = 'white';
+    game.maxEnemies = 100;
+    game.level = 1;
+    game.enemies = new Array();
+    game.p = null;
+    game.count = 0;
+    game.score = 0;
+    game.frames= 100;
+    game.mousex = 0;
+    game.mousey = 0; 
+    game.prevx = 0;
+    game.prevy = 0;
         var i = 0;
-        for(i=0;i<maxEnemies;i++){
+        for(i=0;i<game.maxEnemies;i++){
             var temp = new enemy(
                     Math.random()*2*canvas.width,
                     Math.random()*canvas.height-canvas.height,
                     Math.random()*(-2)-2,
                     Math.random()*(-2)-2,
-                    Math.random()*3+3,enemyColor
+                    Math.random()*3+3,game.enemyColor
                 );
             temp.vy = -1*temp.vx;
-            enemies.push(temp);    
+            game.enemies.push(temp);    
         }
-        for(i=0;i<maxEnemies;i++){
-            enemies[i].vy = -1*enemies[i].vx;
+        for(i=0;i<game.maxEnemies;i++){
+            game.enemies[i].vy = -1*game.enemies[i].vx;
         }
-        p = new player(mousex,mousey,10,playerColor);
+        game.p = new player(mousex,mousey,10,game.playerColor);
         game.loop();
     },
     start : function() {
@@ -92,7 +106,14 @@ var game = {
         c.shadowBlur=1;
         c.fillText("[ Press any key to start ]",canvas.width/2-90,canvas.height/2+230);
         // c.closePath();
-        window.addEventListener('keypress',game.init,false);
+        window.addEventListener('keypress',game.check,false);
+    },
+
+    check : function(){
+        if(game.alive==0){
+            game.alive =  1;
+            game.init();
+        }
     },
 
     distance : function(ob1,ob2){
@@ -103,29 +124,31 @@ var game = {
     update : function(){
 
         var i=0;
-        p.x = game.mousex;
-        p.y = game.mousey;
-        for(i=0;i<maxEnemies;i++){
-            enemies[i].x+=enemies[i].vx;
-            enemies[i].y+=enemies[i].vy;
+        game.p.x = game.mousex;
+        game.p.y = game.mousey;
+        for(i=0;i<game.maxEnemies;i++){
+            game.enemies[i].x+=game.enemies[i].vx;
+            game.enemies[i].y+=game.enemies[i].vy;
             
-            if(game.distance(enemies[i],p)<=enemies[i].rad+p.rad){
-                life -=20;
+            if(game.distance(game.enemies[i],game.p)<=game.enemies[i].rad+game.p.rad){
+                game.life -=20;
+                if(game.life == 0)
+                    game.alive = 0;
                 // console.log(life);
-                enemies.splice(i,1);
+                game.enemies.splice(i,1);
                 var temp = new enemy(
                     Math.random()*2*canvas.width,
                     Math.random()*canvas.height-canvas.height,
-                    Math.random()*(-2)-1.5*level,
-                    Math.random()*(-2)-1.5*level,
-                    Math.random()*3+3,enemyColor
+                    Math.random()*(-2)-1.5*game.level,
+                    Math.random()*(-2)-1.5*game.level,
+                    Math.random()*3+3,game.enemyColor
                 );
                 temp.vy = -1*temp.vx;
-                enemies.push(temp);
+                game.enemies.push(temp);
             }
 
-            if(enemies[i].x <= 0 || enemies[i].y >= canvas.height){
-                enemies.splice(i,1);
+            if(game.enemies[i].x <= 0 || game.enemies[i].y >= canvas.height){
+                game.enemies.splice(i,1);
                 // setTimeout( function() {
                 //     enemies.splice(i,1);
                 //   }, 0);
@@ -133,20 +156,20 @@ var game = {
                 var temp = new enemy(
                     Math.random()*2*canvas.width,
                     Math.random()*canvas.height-canvas.height,
-                    Math.random()*(-2)-1.5*level,
-                    Math.random()*(-2)-1.5*level,
-                    Math.random()*3+3,enemyColor
+                    Math.random()*(-2)-1.5*game.level,
+                    Math.random()*(-2)-1.5*game.level,
+                    Math.random()*3+3,game.enemyColor
                 );
                 temp.vy=-1*temp.vx;
-                enemies.push(temp);
+                game.enemies.push(temp);
             }
         }
     },
 
     render : function(){
-        count++;
-        count=count%frames;
-        if(count==0){
+        game.count++;
+        game.count=game.count%game.frames;
+        if(game.count==0){
             game.prevx = game.mousex;
             game.prevy = game.mousey;
         }
@@ -154,31 +177,31 @@ var game = {
         // c.clearRect(0,0,canvas.width,canvas.height);
         c.font = "20px Arial";
         
-        c.fillText("Score : " + score,50,50);
+        c.fillText("Score : " + game.score,50,50);
 
         // c.fillStyle = "rgb("+255*life/100+','+255*life/100+','+255*life/100+')';
-        c.fillRect(200,33,life*2,20);
+        c.fillRect(200,33,game.life*2,20);
 
         c.fillStyle = 'rgba(0,0,0,0.1)';
         c.beginPath();
         c.fillRect(0, 0 ,canvas.width, canvas.height);
         c.closePath();
-        c.fillStyle = enemyColor;
+        c.fillStyle = game.enemyColor;
         c.globalAlpha = 0.8;
-        for(i=0;i<maxEnemies;i++){
+        for(i=0;i<game.maxEnemies;i++){
             c.beginPath();
             c.shadowBlur = 10;
 			c.shadowColor = "red";
-            c.arc(enemies[i].x,enemies[i].y,enemies[i].rad,0,Math.PI*2,false);
+            c.arc(game.enemies[i].x,game.enemies[i].y,game.enemies[i].rad,0,Math.PI*2,false);
             c.closePath();
             c.fill();
         }
         c.globalAlpha = 1;
-        c.fillStyle = playerColor;
+        c.fillStyle = game.playerColor;
         c.shadowBlur = 20;
         c.shadowColor = "aqua";
         c.beginPath();
-        c.arc(p.x,p.y,p.rad,0,Math.PI*2,false);
+        c.arc(game.p.x,game.p.y,game.p.rad,0,Math.PI*2,false);
         c.closePath();
         c.fill();
         c.shadowColor = "white";
@@ -186,18 +209,17 @@ var game = {
     },
 
     loop: function() {
-        if(life){
-        score++;
-        if(score%1000 == 0){
-            level++;
+        if(game.life){
+        game.score++;
+        if(game.score%1000 == 0){
+            game.level++;
         }
-        if(score%1000==0||score%1000==1||score%1000==2||score%1000==3||score%1000==4){
+        if(game.score%1000<=0 && game.score%1000<=10){
             c.font = "30px Arial"; 
             c.fillStyle = "blue";
             c.fillText("Level up",canvas.width/2-250,53);
-            c.fillStyle = playerColor;
-        }
-            
+            c.fillStyle = game.playerColor;
+        } 
         game.update();
         game.render();
         requestAnimFrame(game.loop);
@@ -205,9 +227,13 @@ var game = {
         else{
             c.clearRect(0,0,canvas.width,canvas.height);
             c.beginPath();
-            c.font = "30px Arial";
-            c.fillText("Score : "+score,canvas.width/2-40,canvas.height/2-20);
+            c.font = "30px Calibri";
+            c.fillStyle = "aquamarine";
+            c.fillText("Score : "+game.score,canvas.width/2-40,canvas.height/2-20);
+            c.font = "15px Arial";
+            c.fillText("[ Click anywhere to play again ]",canvas.width/2-70,canvas.height/2);
             c.closePath();
+            window.addEventListener('mousedown',game.check,false);
         }
     }
 };
