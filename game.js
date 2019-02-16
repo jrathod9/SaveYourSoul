@@ -19,6 +19,12 @@ var player = function(x,y,rad,clr){
     this.clr = clr;
 }
 
+var powerup = function(x,y,type){
+    this.x = x;
+    this.y = y;
+    this.type = type;
+}
+
 window.requestAnimFrame = (function(){
     return  window.requestAnimationFrame       ||
             window.webkitRequestAnimationFrame ||
@@ -32,6 +38,7 @@ window.requestAnimFrame = (function(){
 
 var game = {
     life : 100,
+    powerups : new Array(),
     enemyColor : 'black',
     playerColor : 'white',
     maxEnemies : 100,
@@ -46,6 +53,8 @@ var game = {
     mousey : 0, 
     prevx : 0,
     prevy : 0,
+    types : ["life","shield"],
+
     init : function(){
     game.life = 100;
     game.alive = 1;
@@ -55,6 +64,7 @@ var game = {
     game.level = 1;
     game.enemies = new Array();
     game.p = null;
+    game.powerups = new Array();
     game.count = 0;
     game.score = 0;
     game.frames= 100;
@@ -122,7 +132,13 @@ var game = {
     },
 
     update : function(){
-
+        // if(game.life<100 && game.score % 355 == 0){
+        //     var temp = new powerup( 
+        //                 Math.random()*2*canvas.width,
+        //                 Math.random()*canvas.height-canvas.height,
+        //                 Math.floor(Math.random()*2);                //0 for life 1 for shield
+        //     game.powerups.push(temp);
+        // }
         var i=0;
         game.p.x = game.mousex;
         game.p.y = game.mousey;
